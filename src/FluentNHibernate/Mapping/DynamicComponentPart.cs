@@ -59,6 +59,41 @@ namespace FluentNHibernate.Mapping
             return propertyMap;
         }
 
+        /// <summary>
+        /// Map a property
+        /// </summary>
+        /// <param name="key">Dictionary key</param>
+        /// <param name="columnName">Property column name</param>
+        /// <example>
+        /// Map("Age", "years_old");
+        /// </example>
+        public PropertyPart Map(string key, string columnName)
+        {
+            return Map<string>(key, columnName);
+        }
+
+        /// <summary>
+        /// Map a property
+        /// </summary>
+        /// <param name="key">Dictionary key</param>
+        /// <param name="columnName">Property column name</param>
+        /// <typeparam name="TProperty">Property type</typeparam>
+        /// <example>
+        /// Map&lt;int&gt;("Age", "years_old");
+        /// </example>
+        public PropertyPart Map<TProperty>(string key, string columnName)
+        {
+            var property = new DummyPropertyInfo(key, typeof(TProperty));
+            var propertyMap = new PropertyPart(property.ToMember(), typeof(T));
+
+            if (!string.IsNullOrEmpty(columnName))
+                propertyMap.Column(columnName);
+
+            providers.Properties.Add(propertyMap);
+
+            return propertyMap;
+        }
+        
         IComponentMapping IComponentMappingProvider.GetComponentMapping()
         {
             return CreateComponentMapping();
